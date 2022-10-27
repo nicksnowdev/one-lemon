@@ -1,0 +1,181 @@
+@import url('https://fonts.cdnfonts.com/css/vanilla-extract');
+
+:root {
+    --col0: rgb(33, 33, 33);
+    --col1: rgb(47, 54, 54);
+    --col2: rgb(106, 112, 92);
+    --col3: rgb(135, 150, 150);
+    --col4: rgb(188, 209, 209);
+    --col5: rgb(252, 197, 45);
+
+    /* this just saves the percent value in case the width gets set to fixed px */
+    --aboutMeWidthPercent: 38%;
+           --aboutMeWidth: 38%; /* this is capped at minimum 550px */
+           --aboutMeMinWidth: 550px; /* this is only used by the js */
+    --aboutMeFontSize: 12pt;
+    --aboutMePicSize: 45%;
+    --aboutMeMargin: 40px;
+}
+
+.headerTable {
+    line-height: 1.0;
+    padding: 10px;
+    width: 100%;
+    table-layout: fixed;
+    border-style: solid;
+    border-width: 3px;
+    border-left: 0px;
+    border-right: 0px;
+    border-color: var(--col1);
+    white-space: nowrap; /* prevent title from wrapping in small window sizes */
+}
+
+.headerTable .bannerCell {
+    font-family: "Vanilla Extract";
+    font-size: 40px;
+    letter-spacing: -6px;
+    font-weight: 100;
+    color: var(--col5);
+    text-align: center;
+    text-decoration: none;
+}
+.headerTable .bannerCell #bannerLink {
+    /* prevent recoloring after clicking the link */
+    text-decoration: none;
+    color: var(--col5);
+}
+
+.headerTable .bannerCell #bannerText {
+    display: inline-block; /* this makes the div only as wide as its text contents */
+}
+
+.headerTable .bannerCell #bannerText span {
+    display: inline-block; /* this needs to be here to allow animation */
+
+    /* something needs to go here to fix the text clipping in safari */
+
+    animation: textWobble 2s ease-in-out calc(.15s * var(--delay)) infinite;
+}
+
+.headerTable #about {
+    font-family: "Vanilla Extract";
+    font-size: 32px;
+    font-weight: 100;
+    color: var(--col1);
+    text-align: left;
+    text-decoration: none;
+}
+
+.headerTable #about:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+#canvasContainer {
+    position: relative;
+    top: 8px;
+    display: flex; /* allows next two lines to center the canvas */
+    justify-content: center;
+    height: calc(var(--vh, 1vh) * 100 - 117px); /* magic */
+}
+
+body {
+    overflow: hidden;
+    background-color: var(--col2);
+}
+
+.aboutMeExpandAnim {
+    animation: .33s ease-out 0s 1 normal both running aboutMeAnim;
+}
+
+.aboutMeRetractAnim {
+    animation: .33s ease-out 0s 1 reverse both running aboutMeAnim;
+}
+
+#aboutMe {
+    width: var(--aboutMeWidth);
+    position: absolute;
+    left: calc(var(--aboutMeWidth) * -1);
+    top: 85px;
+    text-align: center;
+    opacity: 0;
+}
+
+#aboutMe img {
+    display: inline;
+    width: var(--aboutMePicSize);
+    height: var(--aboutMePicSize);
+    margin: var(--aboutMeMargin);
+    margin-bottom: 20px;
+    margin-left: 0px;
+    margin-right: 0px;
+    border: solid;
+    border-width: 2px;
+    border-radius: 50%;
+    border-color: var(--col0);
+    box-shadow: 0px 0px 15px var(--col0);
+}
+
+.infoPanel {
+    text-align: left;
+    padding: 10px;
+    padding-left: var(--aboutMeFontSize);
+    padding-right: var(--aboutMeFontSize);
+    margin: var(--aboutMeMargin);
+    margin-top: 0px;
+    margin-bottom: 0px;
+    border: solid;
+    border-width: 2px;
+    border-radius: 10px;
+    border-color: var(--col0);
+    box-shadow: 0px 0px 15px var(--col0);
+    font-family: "Vanilla Extract";
+    font-size: var(--aboutMeFontSize);
+    line-height: 1.5;
+    background-color: var(--col4);
+    color: var(--col1);
+}
+
+.infoPanel h1 {
+    text-align: center;
+    line-height: 1.0;
+}
+
+footer {
+    padding: 7px;
+    margin-bottom: 10px;
+    position: fixed;
+    bottom: 0;
+    width: calc(100% - 30px);
+    border-style: solid;
+    border-width: 3px;
+    border-left: 0px;
+    border-right: 0px;
+    border-color: var(--col1);
+}
+
+@keyframes textWobble {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.12);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes aboutMeAnim {
+    from {
+        transform: translate(0%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translate(100%, 0%);
+        opacity: 1;
+    }
+}

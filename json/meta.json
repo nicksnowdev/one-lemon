@@ -1,0 +1,57 @@
+{
+    "name": "main",
+    "projects": [
+
+    ],
+    "subfolders": [
+        {
+            "name": "Chaos/Fractals",
+            "projects": [
+                {
+                    "title": "Lorenz Attractor",
+                    "path": "lorenz_attractor",
+                    "description": "Tweak parameters and explore this mesmerizing chaotic system."
+                },
+                {
+                    "title": "Mandelbrot Explorer",
+                    "path": "mandelbrot_explorer",
+                    "description": "Zoom in and discover the infinite detail of the Mandelbrot set."
+                }
+            ],
+            "subfolders": [
+
+            ]
+        },
+        {
+            "name": "Web Design",
+            "projects": [
+                {
+                    "title": "One Lemon",
+                    "path": "one_lemon",
+                    "description": "This website!"
+                }
+            ],
+            "subfolders": [
+
+            ]
+        },
+        {
+            "name": "Cellular Automata",
+            "projects": [
+                {
+                    "title": "Game of Life",
+                    "path": "game_of_life",
+                    "description": "A stylized interpretation of one of the most famous cellular automata."
+                },
+                {
+                    "title": "2^512 2D CAs!",
+                    "path": "2D_CA",
+                    "description": "Explore every possible 2D cellular automaton with a 3x3 neighborhood!"
+                }
+            ],
+            "subfolders": [
+    
+            ]
+        }
+    ]
+}

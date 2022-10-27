@@ -1,0 +1,97 @@
+@import url('https://fonts.cdnfonts.com/css/vanilla-extract');
+
+:root {
+    --col0: rgb(33, 33, 33);
+    --col1: rgb(47, 54, 54);
+    --col2: rgb(106, 112, 92);
+    --col3: rgb(135, 150, 150);
+    --col4: rgb(188, 209, 209);
+    --col5: rgb(252, 197, 45);
+
+    /* this just saves the percent value in case the width gets set to fixed px */
+    --descriptionWidthPercent: 28%;
+           --descriptionWidth: 28%; /* this is capped at minimum 550px */
+           --descriptionMinWidth: 400px; /* this is only used by the js */
+    --descriptionFontSize: 12pt;
+}
+
+#sidebar {
+    background-color: var(--col2);
+    position: absolute;
+    height: calc(100% - 3px * 2); /* account for border thickness */
+    left: calc(var(--descriptionWidth) * -1 - 3px);
+    border: 3px;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+    border-style: solid;
+    border-color: var(--col1);
+    border-left: 0px;
+    top: 0px;
+    width: var(--descriptionWidth);
+    z-index: 1;
+    font-family: "Vanilla Extract";
+    font-size: var(--descriptionFontSize);
+    color: var(--col0);
+}
+
+#descriptionTitle {
+    margin: 20px;
+    text-align: center;
+}
+
+#descriptionText {
+    margin: 15px;
+    padding: 10px;
+    border: 2px;
+    border-radius: 10px;
+    border-style: solid;
+    border-color: var(--col1);
+    text-indent: calc(var(--descriptionFontSize) * 2);
+}
+
+#sidebarClose {
+    position: absolute;
+    top: 0px;
+    left: calc(100% - var(--descriptionFontSize) * 3.5);
+    font-size: calc(var(--descriptionFontSize) * 2);
+    color: var(--col1);
+}
+
+#sidebarClose:hover {
+    color: black;
+    cursor: pointer;
+}
+
+#sidebarOpen {
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    font-size: calc(var(--descriptionFontSize) * 2);
+    color: var(--col2);
+    z-index: .5;
+    font-family: "Vanilla Extract";
+    letter-spacing: calc(var(--descriptionFontSize) / 3);
+}
+
+#sidebarOpen:hover {
+    color: white;
+    cursor: pointer;
+}
+
+.sidebarExpandAnim {
+    animation: .33s ease-out 0s 1 normal both running sidebarAnim;
+}
+
+.sidebarRetractAnim {
+    animation: .33s ease-out 0s 1 reverse both running sidebarAnim;
+}
+
+@keyframes sidebarAnim {
+    from {
+        transform: translate(0%);
+    }
+
+    to {
+        transform: translate(100%, 0%);
+    }
+}

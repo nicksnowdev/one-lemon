@@ -9,12 +9,12 @@
             "projects": [
                 {
                     "title": "Lorenz Attractor",
-                    "path": "lorenz_attractor",
+                    "path": "Lorenz-Attractor",
                     "description": "Tweak parameters and explore this mesmerizing chaotic system."
                 },
                 {
                     "title": "Mandelbrot Explorer",
-                    "path": "mandelbrot_explorer",
+                    "path": "Mandelbrot-Explorer",
                     "description": "Zoom in and discover the infinite detail of the Mandelbrot set."
                 }
             ],
@@ -27,7 +27,7 @@
             "projects": [
                 {
                     "title": "One Lemon",
-                    "path": "one_lemon",
+                    "path": "one-lemon",
                     "description": "This website!"
                 }
             ],
@@ -40,12 +40,12 @@
             "projects": [
                 {
                     "title": "Game of Life",
-                    "path": "game_of_life",
+                    "path": "GPU-Conway",
                     "description": "A stylized interpretation of one of the most famous cellular automata."
                 },
                 {
                     "title": "2^512 2D CAs!",
-                    "path": "2D_CA",
+                    "path": "GPU-2D-CA",
                     "description": "Explore every possible 2D cellular automaton with a 3x3 neighborhood!"
                 }
             ],

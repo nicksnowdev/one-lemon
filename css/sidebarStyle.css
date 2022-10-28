@@ -28,7 +28,7 @@
     border-left: 0px;
     top: 0px;
     width: var(--descriptionWidth);
-    z-index: 1;
+    z-index: 2;
     font-family: "Vanilla Extract";
     font-size: var(--descriptionFontSize);
     color: var(--col0);
@@ -68,7 +68,7 @@
     left: 20px;
     font-size: calc(var(--descriptionFontSize) * 2);
     color: var(--col2);
-    z-index: .5;
+    z-index: 1;
     font-family: "Vanilla Extract";
     letter-spacing: calc(var(--descriptionFontSize) / 3);
 }

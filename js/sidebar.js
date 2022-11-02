@@ -11,8 +11,7 @@ let mobile = false;
 if (mobileCheck()) {
   mobile = true;
   document.documentElement.style.setProperty('--descriptionWidth', '100%');
-  document.documentElement.style.setProperty('--descriptionFontSize', '8pt'); // it makes no sense for this to be so small... 
-                                                                              // mobile project pages need a lot of optimization
+  // mobile project pages need a lot of optimization
 }
 
 // called whenever the window is resized

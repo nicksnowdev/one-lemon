@@ -50,7 +50,8 @@
 
 #sidebarClose {
     position: absolute;
-    top: 0px;
+    line-height: 0px;
+    top: calc(var(--descriptionFontSize) * 1.7);
     left: calc(100% - var(--descriptionFontSize) * 3.5);
     font-size: calc(var(--descriptionFontSize) * 2);
     color: var(--col1);
@@ -63,8 +64,9 @@
 
 #sidebarOpen {
     position: absolute;
-    top: 10px;
-    left: 20px;
+    line-height: 0px;
+    top: calc(var(--descriptionFontSize) * 2);
+    left: var(--descriptionFontSize);
     font-size: calc(var(--descriptionFontSize) * 2);
     color: var(--col2);
     z-index: 1;

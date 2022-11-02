@@ -122,6 +122,10 @@ let projectLink; // this holds an <a> element that is created dynamically for pr
 let jsonObj;
 const thumbnails = {};
 let masker;
+// used for the one-lemon thumbnail
+let feedbackMasker;
+let dim; // set in windowResized(), holds shortest canvas dimension
+let oneLemonVisible = false;
 
 // dot matrix for canvas background
 let bgImg;
@@ -199,6 +203,16 @@ function windowResized() {
       document.documentElement.style.setProperty('--aboutMeWidth', document.documentElement.style.getPropertyValue('--aboutMeWidthPercent'));
     }
   }
+
+  dim = min(width, height);
+  feedbackMasker.remove();
+  feedbackMasker = createGraphics(min(width, height), min(width, height));
+  feedbackMasker.clear();
+  feedbackMasker.noStroke();
+  feedbackMasker.fill(0, 0, 0, 127);
+  feedbackMasker.circle(dim / 2, dim / 2, dim);
+  feedbackMasker.fill(0, 0, 0, 255);
+  feedbackMasker.circle(dim / 2, dim / 2, dim * .99);
 }
 
 // keep things looking consistent accross different screen sizes
@@ -450,6 +464,7 @@ function processProjects(folder, numItems, numProjects) {
 
 // every visible folder runs this
 function processSelf(folder, lastFolder) {
+  if(folder.name == "Web Design") oneLemonVisible = true; // bad hard-coded solution to optimize the active thumbnail on one-lemon project
   if(folder != lastFolder) {
     // if moused over
     if( mouseX > folder.x + xa - nodeSize / 2 && mouseX < folder.x + xa + nodeSize / 2 &&
@@ -775,6 +790,7 @@ function setup() {
   canvas.parent("canvasContainer");
   background(col1); // initialize
   masker = createGraphics(500, 500); // for masking thumbnails
+  feedbackMasker = createGraphics(min(width, height), min(width, height));
   prepJsonObj(jsonObj, thumbnails); // load and mask thumbnails
   jsonObj.open = true; // open the main folder
 
@@ -833,8 +849,8 @@ function draw() {
   pop();
 
   strokeJoin(ROUND);
-  processProjectInFocus(projectInFocus);
   recursiveLoop(jsonObj, jsonObj); // call recursive processing loop on folder hierarchy
+  processProjectInFocus(projectInFocus);
   // draw project in focus on top of interface
   if(projectInFocus != 0) {
     drawProjectInFocus(projectInFocus);
@@ -843,6 +859,26 @@ function draw() {
   // i had to draw the gradients inside out and backwards in order to get an exponential slope
   gradient(0, 20, canvas.width, 20, color(0, 0, 0, 127), color(0, 0, 0, 0), -1);
   gradient(0, canvas.height - 20, canvas.width, 20, color(0, 0, 0, 127), color(0, 0, 0, 0), 1);
+
+
+
+  // feedback thumbnail
+  if(oneLemonVisible) {
+    let canvasPix;
+    if(width >= height) {
+      canvasPix = canvas.get(floor((width - height) / 2), 0, height, height); // load window pixels
+    } 
+    else {
+      canvasPix = canvas.get(0, floor((height - width) / 2), width, width); // load window pixels
+    }
+    canvasPix.mask(feedbackMasker);
+    thumbnails["one-lemon"] = canvasPix;
+    oneLemonVisible = false; // this gets set to true in processSelf() if Web Design is open.
+  }
+
+
+
+
 
   mClick = false; // capture this here in case the user clicked on nothing
   if(mobile) {

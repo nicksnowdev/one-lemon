@@ -24,8 +24,7 @@
     table-layout: fixed;
     border-style: solid;
     border-width: 3px;
-    border-left: 0px;
-    border-right: 0px;
+    border-radius: 10px;
     border-color: var(--col1);
     white-space: nowrap; /* prevent title from wrapping in small window sizes */
 }
@@ -146,11 +145,10 @@ footer {
     margin-bottom: 10px;
     position: fixed;
     bottom: 0;
-    width: calc(100% - 30px);
+    width: calc(100% - 35px);
     border-style: solid;
     border-width: 3px;
-    border-left: 0px;
-    border-right: 0px;
+    border-radius: 10px;
     border-color: var(--col1);
 }
 

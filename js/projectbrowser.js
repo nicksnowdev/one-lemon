@@ -114,6 +114,7 @@ let scale = 1; // scale changes when you change the canvas size. keeps everythin
 let smoothing = 5; // smoothing for node motion
 let mediumSmoothing = 3; // smoothing for project focus expansions
 let fastSmoothing = 2; // smoothing for node mouse-over expansions
+let nodeAngle = 140; // determines how wide the branches spread out.
 
 let projectInFocus = 0; // this variable holds the currently open project and draws it on top of everything.
 let projectLink; // this holds an <a> element that is created dynamically for projects in focus
@@ -373,7 +374,7 @@ function closeChildren(folder) {
 function processProjects(folder, numItems, numProjects) {
   for(var i = 0; i < numProjects; i++) {
     let project = folder.projects[i];
-    project.angle = 180 / numItems * i - 90 / numItems * (numItems - 1) + folder.angle;
+    project.angle = nodeAngle / numItems * i - (nodeAngle * .5) / numItems * (numItems - 1) + folder.angle;
 
     // if moused over
     if( dist(mouseX, mouseY, project.x + xa, project.y + ya) < project.size * .5 &&
@@ -592,7 +593,7 @@ function recursiveLoop(folder, lastFolder) {
     for(var i = numProjects; i < numItems; i++) {
       if(folder != lastFolder) {
         // i don't think it be like it is, but it do.
-        folder.subfolders[i - numProjects].angle = 180 / numItems * i - 90 / numItems * (numItems - 1) + folder.angle;
+        folder.subfolders[i - numProjects].angle = nodeAngle / numItems * i - (nodeAngle * .5) / numItems * (numItems - 1) + folder.angle;
       }
       else { // main folder only
         folder.subfolders[i - numProjects].angle = 360 / folder.subfolders.length * i + cam.angle;

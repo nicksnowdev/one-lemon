@@ -36,6 +36,54 @@
             ]
         },
         {
+            "name": "Example Category",
+            "projects": [
+                {
+                    "title": "Project 1",
+                    "path": "",
+                    "description": ""
+                }
+            ],
+            "subfolders": [
+                {
+                    "name": "Sub-Category",
+                    "projects": [
+                        {
+                            "title": "Project 2",
+                            "path": "",
+                            "description": ""
+                        },
+                        {
+                            "title": "Project 3",
+                            "path": "",
+                            "description": ""
+                        },
+                        {
+                            "title": "Project 4",
+                            "path": "",
+                            "description": ""
+                        }
+                    ],
+                    "subfolders": [
+        
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Whatever",
+            "projects": [
+                {
+                    "title": "Project 0",
+                    "path": "",
+                    "description": ""
+                }
+            ],
+            "subfolders": [
+
+            ]
+        },
+        {
             "name": "Cellular Automata",
             "projects": [
                 {

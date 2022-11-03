@@ -149,7 +149,6 @@ const history = [];
 
 
 // get input and prevent wacky inputs >:(
-// need to patch behavior on mobile where mouseX and mouseY = the last tap location
 function touchEnded() {
     mClick = true;
     tapTimer = 0; // reset tapTimer
@@ -158,12 +157,12 @@ function touchEnded() {
       if(mobile && aboutExpanded) { // prevent clicking "through" bio onto interface on mobile
         mClick = false;
       }
-      aboutMeClose(); // this is here to catch weird behavior on mobile
     }
 }
 // mitigate redundant inputs if the mouse is on the canvas, unless a project is in focus (links don't open otherwise)
+// also lets them through if the bio is showing for the same reason
 function touchStarted() {
-  if(projectInFocus != 0 || mouseY < 0 || mouseY > canvas.height || mouseX < 0 || mouseX > canvas.width) {
+  if(aboutExpanded || projectInFocus != 0 || mouseY < 0 || mouseY > canvas.height || mouseX < 0 || mouseX > canvas.width) {
     return true;
   }
   else {
@@ -775,6 +774,16 @@ function setup() {
   pixelDensity(1); // account for high-density displays
   containerSize = select("#canvasContainer").size();
   canvas = createCanvas(containerSize.width + extraWidth, containerSize.height + extraHeight); // 2D mode
+  document.getElementById(canvas.id()).onclick = aboutMeClose;
+  document.getElementById("pic").onclick = function(e) {
+    e.stopPropagation();
+  }
+  document.getElementById("socials").onclick = function(e) {
+    e.stopPropagation();
+  }
+  document.getElementById("bio").onclick = function(e) {
+    e.stopPropagation();
+  }
   centerX = canvas.width / 2;
   centerY = canvas.height / 2;
 

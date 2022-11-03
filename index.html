@@ -16,27 +16,27 @@
                 </div>
             </td>
             <td class="bannerCell">
-                <a id="bannerLink" href="https://www.one-lemon.com">
-                    <div id="bannerText">
-                        <span style="--delay: 1;">o</span>
-                        <span style="--delay: 2;">n</span>
-                        <span style="--delay: 3;">e</span>
-                        <span style="--delay: 4; width: 10px;"> </span>
-                        <span style="--delay: 5;">l</span>
-                        <span style="--delay: 6;">e</span>
-                        <span style="--delay: 7;">m</span>
-                        <span style="--delay: 8;">o</span>
-                        <span style="--delay: 9;">n</span>
-                    </div>
-                </a>
+                <a id="bannerLink" href="https://www.one-lemon.com">one lemon</a>
             </td>
             <td></td>
         </tr>
     </table>
     <div id="canvasContainer"></div>
-    <div id="aboutMe">
-        <img src="images/about_me.png" alt="Nick Snow">
-        <div class="infoPanel">
+    <div id="aboutMe" onclick="aboutMeClose()">
+        <div id="bioTop">
+            <img id="pic" src="images/about_me.png" alt="Nick Snow">
+            <div id="socials" class="infoPanel">
+                <div class="socialItem">
+                    <img class="socialIcon" src="images/github.png" alt="Github">
+                    <a class="socialLink" href="https://github.com/nicksnowdev" target="_blank">Github</a>
+                </div>
+                <div class="socialItem">
+                    <img class="socialIcon" src="images/twitter.png" alt="Twitter">
+                    <a class="socialLink" href="https://twitter.com/OneLemonDev" target="_blank">Twitter</a>
+                </div>
+            </div>
+        </div>
+        <div id="bio" class="infoPanel">
             <h1>Nick Snow</h1>
             <p>Creative coding has been a hobby of mine since 2015. I started with Python, and later moved on to game engines like Gamemaker and Godot. In 2022, I recreated some of my favorite projects in p5.js, and built this personal website to organize and share them. I intend to grow this portfolio with all my future projects.</p>
         </div>

@@ -23,60 +23,17 @@
             ]
         },
         {
-            "name": "Web Design",
+            "name": "Just for Fun",
             "projects": [
                 {
                     "title": "One Lemon",
                     "path": "one-lemon",
                     "description": "This website!"
-                }
-            ],
-            "subfolders": [
-
-            ]
-        },
-        {
-            "name": "Example Category",
-            "projects": [
+                },
                 {
-                    "title": "Project 1",
-                    "path": "",
-                    "description": ""
-                }
-            ],
-            "subfolders": [
-                {
-                    "name": "Sub-Category",
-                    "projects": [
-                        {
-                            "title": "Project 2",
-                            "path": "",
-                            "description": ""
-                        },
-                        {
-                            "title": "Project 3",
-                            "path": "",
-                            "description": ""
-                        },
-                        {
-                            "title": "Project 4",
-                            "path": "",
-                            "description": ""
-                        }
-                    ],
-                    "subfolders": [
-        
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Whatever",
-            "projects": [
-                {
-                    "title": "Project 0",
-                    "path": "",
-                    "description": ""
+                    "title": "Rogue Royale",
+                    "path": "Rogue-Royale",
+                    "description": "A one-off tool I built for a friend's stream"
                 }
             ],
             "subfolders": [

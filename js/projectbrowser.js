@@ -464,7 +464,7 @@ function processProjects(folder, numItems, numProjects) {
 
 // every visible folder runs this
 function processSelf(folder, lastFolder) {
-  if(folder.name == "Web Design") oneLemonVisible = true; // bad hard-coded solution to optimize the active thumbnail on one-lemon project
+  if(folder.name == "Just for Fun") oneLemonVisible = true; // bad hard-coded solution to optimize the active thumbnail on one-lemon project
   if(folder != lastFolder) {
     // if moused over
     if( mouseX > folder.x + xa - nodeSize / 2 && mouseX < folder.x + xa + nodeSize / 2 &&

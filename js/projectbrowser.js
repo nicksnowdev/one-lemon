@@ -6,8 +6,10 @@
 let vh = window.innerHeight * 0.01;
 document.documentElement.style.setProperty('--vh', `${vh}px`);
 
+// this runs when the about me link is clicked
 let aboutExpanded = false;
-function aboutMeAnim() {
+function aboutMeAnim(e) {
+  e.preventDefault();
   if(!aboutExpanded) {
     document.getElementById("aboutMe").classList.remove("aboutMeRetractAnim");
     void document.getElementById("aboutMe").offsetWidth;
@@ -20,13 +22,16 @@ function aboutMeAnim() {
   }
   aboutExpanded = !aboutExpanded;
 }
-// this is called if the canvas is clicked on
-function aboutMeClose() {
+
+// this is called if the canvas or negative space in the bio is clicked on
+function aboutMeClose(e) {
+  e.preventDefault();
   if(aboutExpanded) {
     document.getElementById("aboutMe").classList.remove("aboutMeExpandAnim");
     void document.getElementById("aboutMe").offsetWidth;
     document.getElementById("aboutMe").classList.add("aboutMeRetractAnim");
   }
+  if(!mClick) canvasClicked(e);
   aboutExpanded = false;
 }
 
@@ -134,48 +139,23 @@ let bgImg;
 // used to keep track of mouse input
 let mClick = false;
 
-// these are used to let the "mouse" exist where you just tapped on mobile for no more than tapWindow frames.
-let tapTimer = 0;
-let tapWindow = 5; // by the way, this is set to 20 when a project starts focusing, and back to 5 when it closes.
-
 // keep a history of the last clicked-on nodes so the camera can focus on the right place
 const history = [];
 
 
 
 
-
-
-
-
-
-// get input and prevent wacky inputs >:(
-function touchEnded() {
-    mClick = true;
-    tapTimer = 0; // reset tapTimer
-    // if mouse is on the canvas (without this, clicking the about me link doesn't close bio)
-    if(mouseX > 0 && mouseX < canvas.width && mouseY > 0 && mouseY < canvas.height) {
-      if(mobile && aboutExpanded) { // prevent clicking "through" bio onto interface on mobile
-        mClick = false;
-      }
-    }
+// this and aboutMeClose call each other, but only if each one wasn't already called
+function canvasClicked(e) {
+  e.preventDefault();
+  mClick = true;
+  if(aboutExpanded) aboutMeClose(e);
 }
-// mitigate redundant inputs if the mouse is on the canvas, unless a project is in focus (links don't open otherwise)
-// also lets them through if the bio is showing for the same reason
-function touchStarted() {
-  if(aboutExpanded || projectInFocus != 0 || mouseY < 0 || mouseY > canvas.height || mouseX < 0 || mouseX > canvas.width) {
-    return true;
-  }
-  else {
-    return false;
-  }
-}
-function mouseClicked() {
-  if(projectInFocus != 0 || mouseY < 0 || mouseY > canvas.height || mouseX < 0 || mouseX > canvas.width) {
-    return true;
-  }
-  else {
-    return false;
+
+function zeroMouse(mobile) {
+  if(mobile) {
+    mouseX = 0;
+    mouseY = 0;
   }
 }
 
@@ -384,7 +364,6 @@ function processProjects(folder, numItems, numProjects) {
       project.targetSize = nodeSize * 1.5;
       // if clicked on
       if(mClick) {
-        tapWindow = 20; // set tap window for project in focus mode
         projectInFocus = JSON.parse(JSON.stringify(project)); // deep copy rather than reference
         projectInFocus.focusing = true;
         projectLink.attribute("href", "https://www.one-lemon.com/projects/" + project.path);
@@ -506,6 +485,7 @@ function processSelf(folder, lastFolder) {
             folder.targetLabelA = 255; // start label fading in
           }
           mClick = false; // capture the input so nothing else reads it
+          zeroMouse(mobile);
         }
       }
     }
@@ -624,20 +604,16 @@ function processProjectInFocus(project) {
           abs(project.targetX - project.x) + abs(project.targetY - project.y) < 10 * scale) { // prevent instant expansion
 
         project.mouseIn = true;
-        // THIS NEEDS TO BE ADJUSTED IF YOU CHANGE THE SIZE OF THE HEADER
-        projectLink.position(winMouseX - 51, winMouseY - 28); // position link to the mouse
-        projectLink.style("font-size", "36pt");
             
         // if clicked on
         if(mClick) {
           mClick = false;
+          zeroMouse(mobile);
         }
       }
       else
       {
         project.mouseIn = false;
-        projectLink.position(width, height); // position link off the page when not in use
-        projectLink.style("font-size", "0pt");
         // if clicked outside
         if(mClick) {
           project.focusing = false;
@@ -647,7 +623,7 @@ function processProjectInFocus(project) {
             history.splice(index, 1);
           }
           mClick = false;
-          tapWindow = 5; // reset tap window to normal duration
+          zeroMouse(mobile);
         }
       }
     }
@@ -689,12 +665,21 @@ function drawProjectInFocus(project) {
 
   // draw labels
   if(project.focusing) {
-
+    // position link
+    projectLink.style("width", String(project.size + "px"));
+    projectLink.style("height", String(project.size + "px"));
+    projectLink.style("border-radius", String(project.size * .5 + "px"));
+    // idk why the y coordinate needs that 175 offset, but it does.
+    projectLink.position(project.x + xa - project.size * .5, project.y + ya - (project.size - 175) * .5);
+    
     // draw open text on thumbnail if moused over
-    if(project.mouseIn && project.size / project.targetSize > .9999) {
+    if((project.mouseIn || mobile) && project.size / project.targetSize > .9999) {
+      // draw highlight effect after delay
       push();
-      fill(255, 255, 255, 24);
-      circle(project.x + xa, project.y + ya, project.size);
+      if(!mobile) { // only draw highlight effect on desktop
+        fill(255, 255, 255, 24);
+        circle(project.x + xa, project.y + ya, project.size);
+      }
       fill(255, 255, 255, 200);
       stroke(0, 0, 0);
       strokeWeight(2 * scale);
@@ -775,23 +760,40 @@ function setup() {
   pixelDensity(1); // account for high-density displays
   containerSize = select("#canvasContainer").size();
   canvas = createCanvas(containerSize.width + extraWidth, containerSize.height + extraHeight); // 2D mode
-  document.getElementById(canvas.id()).onclick = aboutMeClose;
-  document.getElementById("pic").onclick = function(e) {
-    e.stopPropagation();
-  }
-  document.getElementById("socials").onclick = function(e) {
-    e.stopPropagation();
-  }
-  document.getElementById("bio").onclick = function(e) {
-    e.stopPropagation();
-  }
+  canvas.style("z-index", 0);
+
+  // event listeners must be added after the page loads, so they are in setup
+  document.getElementById(canvas.id()).addEventListener("click", canvasClicked);
+  document.getElementById(canvas.id()).addEventListener("touchend", canvasClicked);
+
+  document.getElementById("aboutMe").addEventListener("click", aboutMeClose);
+  document.getElementById("aboutMe").addEventListener("touchend", aboutMeClose);
+  document.getElementById("aboutMe").style.zIndex = 2;
+
+  document.getElementById("about").addEventListener("click", aboutMeAnim);
+  document.getElementById("about").addEventListener("touchend", aboutMeAnim);
+
+  document.getElementById("pic").addEventListener("click", function(e) {e.stopPropagation();})
+  document.getElementById("pic").addEventListener("touchend", function(e) {e.stopPropagation();})
+
+  document.getElementById("socials").addEventListener("click", function(e) {e.stopPropagation();})
+  document.getElementById("socials").addEventListener("touchend", function(e) {e.stopPropagation();})
+
+  document.getElementById("bio").addEventListener("click", function(e) {e.stopPropagation();})
+  document.getElementById("bio").addEventListener("touchend", function(e) {e.stopPropagation();})
+
   centerX = canvas.width / 2;
   centerY = canvas.height / 2;
 
-  projectLink = createA("", "LINK", "_blank"); // initialize this here
+  projectLink = createA("", "", "_blank"); // initialize this here
   projectLink.style("position", "absolute");
   projectLink.style("font-size", "0pt"); // this has to be like this so that the page doesn't display weird on mobile
   projectLink.style("opacity", "0");
+  //projectLink.style("background", "rgb(255, 0, 0)"); // for debugging
+  projectLink.style("width", "0px");
+  projectLink.style("height", "0px");
+  projectLink.style("border-radius", String(nodeSize * 3.5 + "px"));
+  projectLink.style("z-index", "1");
   projectLink.position(width, height);
 
   // scale interface
@@ -826,6 +828,11 @@ function draw() {
     // offset camera when project view is open
     if(projectInFocus != 0) {
       if(projectInFocus.focusing) cam.targetY += scale * 20;
+      else {
+        projectLink.position(width + xa, height + xa); // hide project link when no focused project
+        projectLink.style("width", "0px");
+        projectLink.style("height", "0px");
+      }
     }
   }
   else {
@@ -887,18 +894,5 @@ function draw() {
   }
 
 
-
-
-
   mClick = false; // capture this here in case the user clicked on nothing
-  if(mobile) {
-    if(tapTimer < tapWindow) {
-      tapTimer++;
-    }
-    else if(tapTimer < tapWindow + 1) {
-      tapTimer++;
-      mouseX = 0;
-      mouseY = 0;
-    }
-  }
 }

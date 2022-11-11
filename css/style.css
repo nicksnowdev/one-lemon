@@ -13,6 +13,10 @@
            --aboutMeWidth: 38%; /* this is capped at minimum 550px */
            --aboutMeMinWidth: 550px; /* this is only used by the js */
     --aboutMeFontSize: 12pt;
+    --searchFontSize: 10pt;
+    --searchBorderRadius: 10px;
+    --searchInputPadding: 5px;
+    --searchResultPadding: 8px;
     --aboutMePicSize: 45%;
     --aboutMeMargin: 5%;
 }
@@ -29,7 +33,7 @@
     white-space: nowrap; /* prevent title from wrapping in small window sizes */
 }
 
-.headerTable .bannerCell {
+.headerTable #bannerCell {
     font-family: "Vanilla Extract";
     font-size: 40px;
     letter-spacing: 3px;
@@ -38,7 +42,7 @@
     text-align: center;
     text-decoration: none;
 }
-.headerTable .bannerCell #bannerLink {
+.headerTable #bannerCell #bannerLink {
     /* prevent recoloring after clicking the link */
     text-decoration: none;
     color: var(--col5);
@@ -67,7 +71,7 @@
 }
 
 body {
-    overflow: hidden;
+    overflow-x: hidden;
     background-color: var(--col2);
 }
 
@@ -162,6 +166,54 @@ body {
 .infoPanel h1 {
     text-align: center;
     line-height: 1.0;
+}
+
+#searchContainer {
+    position: absolute;
+    top: 125px;
+    box-shadow: 0px 0px 15px var(--col0);
+    border-radius: var(--searchBorderRadius);
+}
+
+#search {
+    font-family: "Vanilla Extract";
+    font-size: var(--searchFontSize);
+    padding: var(--searchInputPadding);
+    background-color: var(--col1);
+    color: var(--col4);
+    border-style: solid;
+    border-width: 3px;
+    border-radius: var(--searchBorderRadius);
+    border-color: var(--col1);
+    outline: none;
+}
+
+#search:focus {
+    border-color: var(--col3);
+}
+
+#searchResultsContainer {
+    font-family: "Vanilla Extract";
+    font-size: var(--searchFontSize);
+    background-color: var(--col1);
+    color: var(--col4);
+    border-style: none;
+    border-width: 3px;
+    border-radius: var(--searchBorderRadius);
+    border-color: var(--col3);
+    border-top: 0px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
+.search-results {
+    margin: -3px;
+    padding: var(--searchResultPadding);
+}
+
+.search-results:hover {
+    background-color: var(--col3);
+    cursor: pointer;
 }
 
 footer {

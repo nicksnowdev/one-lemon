@@ -1,19 +1,19 @@
 {
-    "name": "main",
+    "id": "main",
     "projects": [
 
     ],
     "subfolders": [
         {
-            "name": "Chaos/Fractals",
+            "id": "Chaos/Fractals",
             "projects": [
                 {
-                    "title": "Lorenz Attractor",
+                    "id": "Lorenz Attractor",
                     "path": "Lorenz-Attractor",
                     "description": "Tweak parameters and explore this mesmerizing chaotic system."
                 },
                 {
-                    "title": "Mandelbrot Explorer",
+                    "id": "Mandelbrot Explorer",
                     "path": "Mandelbrot-Explorer",
                     "description": "Zoom in and discover the infinite detail of the Mandelbrot set."
                 }
@@ -23,17 +23,17 @@
             ]
         },
         {
-            "name": "Just for Fun",
+            "id": "Just for Fun",
             "projects": [
                 {
-                    "title": "One Lemon",
+                    "id": "One Lemon",
                     "path": "one-lemon",
                     "description": "This website!"
                 },
                 {
-                    "title": "Rogue Royale",
+                    "id": "Rogue Royale",
                     "path": "Rogue-Royale",
-                    "description": "A one-off tool I built for a friend's stream"
+                    "description": "A tool I built for my friend's Twitch stream"
                 }
             ],
             "subfolders": [
@@ -41,15 +41,15 @@
             ]
         },
         {
-            "name": "Cellular Automata",
+            "id": "Cellular Automata",
             "projects": [
                 {
-                    "title": "Game of Life",
+                    "id": "Game of Life",
                     "path": "GPU-Conway",
                     "description": "A stylized interpretation of one of the most famous cellular automata."
                 },
                 {
-                    "title": "2^512 2D CAs!",
+                    "id": "2^512 2D CAs!",
                     "path": "GPU-2D-CA",
                     "description": "Explore every possible 2D cellular automaton with a 3x3 neighborhood!"
                 }

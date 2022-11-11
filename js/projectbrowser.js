@@ -44,11 +44,95 @@ window.mobileCheck = function() {
 };
 // check for mobile user and adjust css variables accordingly
 let mobile = false;
-if (mobileCheck()) {
-  mobile = true;
-  document.documentElement.style.setProperty('--aboutMeWidth', '100%');
-  document.documentElement.style.setProperty('--aboutMeFontSize', '24pt');
-  document.documentElement.style.setProperty('--aboutMePicSize', '60%');
+
+
+function showSearchResults() {
+  let inputField = document.getElementById("search");
+  let resultsContainer = document.getElementById("searchResultsContainer");
+  let val = inputField.value;
+  while(searchResults.length > 0) {
+    searchResults.pop(); // clear results
+  }
+  if(val.length > 0) { // find matches
+    for(let i = 0; i < allProjects.length; i++) {
+      let rank = allProjects[i].id.toLowerCase().search(val.toLowerCase());
+      if(rank > -1) {
+        searchResults.push({"id": allProjects[i].id, "rank": rank});
+      }
+    }
+    let sorted = false;
+    while(!sorted) { // bubble sort by rank (match distance from beginning of title)
+      sorted = true;
+      for(let i = 1; i < searchResults.length; i++) {
+        if(searchResults[i].rank < searchResults[i - 1].rank) {
+          sorted = false;
+          let temp = searchResults[i];
+          searchResults[i] = searchResults[i - 1];
+          searchResults[i - 1] = temp;
+        }
+      }
+    }
+    for(let i = 0; i < searchResults.length; i++) {
+      searchResults[i] = searchResults[i].id;
+    }
+  }
+  else { // for empty search, show all
+    for(let i = 0; i < allProjects.length; i++) {
+      searchResults.push(allProjects[i].id);
+    }
+    searchResults.sort();
+  }
+
+  // delete children
+  results = document.getElementsByClassName("search-results");
+  while(results.length > 0) {
+    results[0].parentNode.removeChild(results[0]);
+  }
+
+  // add new children
+  for(let i = 0; i < searchResults.length; i++) {
+    let r = createResult(searchResults[i]);
+    if(i == searchResults.length - 1) {
+      r.style.borderBottomLeftRadius = getComputedStyle(document.documentElement).getPropertyValue("--searchBorderRadius");
+      r.style.borderBottomRightRadius = getComputedStyle(document.documentElement).getPropertyValue("--searchBorderRadius");
+    }
+    resultsContainer.appendChild(r);
+  }
+
+  // make the results appear with the right style
+  resultsContainer.style.borderStyle = "solid";
+  resultsContainer.style.paddingTop = "3px";
+  inputField.style.borderBottomLeftRadius = "0px";
+  inputField.style.borderBottomRightRadius = "0px";
+}
+
+function createResult(title) {
+  let r = document.createElement("div");
+  r.setAttribute("class", "search-results");
+  r.innerHTML = title;
+  r.addEventListener("click", setSearch);
+  r.addEventListener("touchend", setSearch);
+  return r;
+}
+
+function clearSearchResults() {
+  let inputField = document.getElementById("search");
+  let resultsContainer = document.getElementById("searchResultsContainer");
+  inputField.value = "";
+  while(searchResults.length > 0) {
+    searchResults.pop(); // clear results array
+  }
+  // delete children
+  results = document.getElementsByClassName("search-results");
+  while(results.length > 0) {
+    results[0].parentNode.removeChild(results[0]);
+  }
+
+  // revert results to invisible style
+  resultsContainer.style.borderStyle = "none";
+  resultsContainer.style.paddingTop = "0px";
+  inputField.style.borderBottomLeftRadius = getComputedStyle(document.documentElement).getPropertyValue("--searchBorderRadius");
+  inputField.style.borderBottomRightRadius = getComputedStyle(document.documentElement).getPropertyValue("--searchBorderRadius");
 }
 
 /************ END NON-P5 STUFF ************/
@@ -126,6 +210,8 @@ let projectLink; // this holds an <a> element that is created dynamically for pr
 
 // json object and container for preloaded thumbnails
 let jsonObj;
+const allProjects = []; // used for search feature
+const searchResults = [];
 const thumbnails = {};
 let masker;
 // used for the one-lemon thumbnail
@@ -147,6 +233,8 @@ const history = [];
 
 // this and aboutMeClose call each other, but only if each one wasn't already called
 function canvasClicked(e) {
+  clearSearchResults();
+  document.getElementById("search").blur();
   e.preventDefault();
   mClick = true;
   if(aboutExpanded) aboutMeClose(e);
@@ -157,6 +245,13 @@ function zeroMouse(mobile) {
     mouseX = 0;
     mouseY = 0;
   }
+}
+
+function setSearch(e) {
+  e.preventDefault();
+  clearSearchResults();
+  document.getElementById("search").blur();
+  searchTitle = this.innerHTML;
 }
 
 // called whenever the window is resized
@@ -301,6 +396,8 @@ function prepJsonObj(folder, imagesObj) {
       masker.circle(250, 250, 495);
       img.mask(masker);
     });
+
+    allProjects.push({id: folder.projects[i].id, description: folder.projects[i].description});
   }
   // recursively run through subfolders
   for(var i = 0; i < folder.subfolders.length; i++) {
@@ -347,7 +444,18 @@ function closeChildren(folder) {
 }
 
 
-
+function openProject(project, folder) {
+  projectInFocus = JSON.parse(JSON.stringify(project)); // deep copy rather than reference
+  projectInFocus.focusing = true;
+  projectLink.attribute("href", "https://www.one-lemon.com/projects/" + project.path);
+  // move folder to front of history
+  let index = history.indexOf(folder);
+  if(index != -1) {
+    history.splice(index, 1);
+  }
+  history.push(folder);
+  history.push(projectInFocus);
+}
 
 
 // every open folder runs this to process its projects
@@ -364,16 +472,7 @@ function processProjects(folder, numItems, numProjects) {
       project.targetSize = nodeSize * 1.5;
       // if clicked on
       if(mClick) {
-        projectInFocus = JSON.parse(JSON.stringify(project)); // deep copy rather than reference
-        projectInFocus.focusing = true;
-        projectLink.attribute("href", "https://www.one-lemon.com/projects/" + project.path);
-        // move folder to front of history
-        let index = history.indexOf(folder);
-        if(index != -1) {
-          history.splice(index, 1);
-          history.push(folder);
-        }
-        history.push(projectInFocus);
+        openProject(project, folder);
       }
     }
     else
@@ -429,21 +528,38 @@ function processProjects(folder, numItems, numProjects) {
       noStroke();
       fill(col4Arr[0], col4Arr[1], col4Arr[2], !folder.retracting * (255 - folder.labelA)); // draw text with animated alpha
       // this positions the text taking into account the width of the label (width * cos(angle)^3)
-      labelAnchorX = project.x + (nodeSize + (textWidth(project.title) * .45) * abs(pow(cos(project.angle), 3))) * cos(project.angle);
-      labelAnchorY = project.y + textSize() * .3 + (nodeSize + (textWidth(project.title) * .45) * abs(pow(cos(project.angle), 3))) * sin(project.angle);
-      text(project.title, labelAnchorX + xa, labelAnchorY + ya);
+      labelAnchorX = project.x + (nodeSize + (textWidth(project.id) * .45) * abs(pow(cos(project.angle), 3))) * cos(project.angle);
+      labelAnchorY = project.y + textSize() * .3 + (nodeSize + (textWidth(project.id) * .45) * abs(pow(cos(project.angle), 3))) * sin(project.angle);
+      text(project.id, labelAnchorX + xa, labelAnchorY + ya);
       pop();
     }
+    // object in history is a copy, not a reference.
+    updateReferences(project);
   }
 }
 
 
 
+function openFolder(folder, enableHistory) {
+  // open the folder and add it to the history
+  folder.open = true;
+  if(enableHistory) history.push(folder); // this is enabled when physically clicking, but not when searching.
+  // initialize children's positions at this folder when they start to shoot out
+  for(let i = 0; i < folder.subfolders.length; i++) {
+    folder.subfolders[i].x = folder.x;
+    folder.subfolders[i].y = folder.y;
+  }
+  for(let i = 0; i < folder.projects.length; i++) {
+    folder.projects[i].x = folder.x;
+    folder.projects[i].y = folder.y;
+  }
+  folder.targetLabelA = 0; // start label fading out
+}
 
 
 // every visible folder runs this
 function processSelf(folder, lastFolder) {
-  if(folder.name == "Just for Fun") oneLemonVisible = true; // bad hard-coded solution to optimize the active thumbnail on one-lemon project
+  if(folder.id == "Just for Fun") oneLemonVisible = true; // bad hard-coded solution to optimize the active thumbnail on one-lemon project
   if(folder != lastFolder) {
     // if moused over
     if( mouseX > folder.x + xa - nodeSize / 2 && mouseX < folder.x + xa + nodeSize / 2 &&
@@ -457,19 +573,7 @@ function processSelf(folder, lastFolder) {
         if(mClick) {
           // if this folder was closed:
           if(!folder.open) {
-            // open the folder and add it to the history
-            folder.open = true;
-            history.push(folder);
-            // initialize children's positions at this folder when they start to shoot out
-            for(var i = 0; i < folder.subfolders.length; i++) {
-              folder.subfolders[i].x = folder.x;
-              folder.subfolders[i].y = folder.y;
-            }
-            for(var i = 0; i < folder.projects.length; i++) {
-              folder.projects[i].x = folder.x;
-              folder.projects[i].y = folder.y;
-            }
-            folder.targetLabelA = 0; // start label fading out
+            openFolder(folder, true);
           }
 
           // if this folder was open:
@@ -541,15 +645,30 @@ function processSelf(folder, lastFolder) {
       }
       fill(col4Arr[0], col4Arr[1], col4Arr[2], folder.labelA); // draw text with animated alpha
       // this positions the text taking into account the width of the label (width * cos(angle)^3)
-      labelAnchorX = folder.x + (nodeSize + (textWidth(folder.name) * .45) * abs(pow(cos(folder.angle), 3))) * cos(folder.angle);
-      labelAnchorY = folder.y + textSize() * .3 + (nodeSize + (textWidth(folder.name) * .45) * abs(pow(cos(folder.angle), 3))) * sin(folder.angle);
-      text(folder.name, labelAnchorX + xa, labelAnchorY + ya);
+      labelAnchorX = folder.x + (nodeSize + (textWidth(folder.id) * .45) * abs(pow(cos(folder.angle), 3))) * cos(folder.angle);
+      labelAnchorY = folder.y + textSize() * .3 + (nodeSize + (textWidth(folder.id) * .45) * abs(pow(cos(folder.angle), 3))) * sin(folder.angle);
+      text(folder.id, labelAnchorX + xa, labelAnchorY + ya);
       pop();
     }
+
+    // object in history is a copy, not a reference.
+    updateReferences(folder);
   }
 }
 
 
+function updateReferences(obj) {
+  for(let i = 0; i < history.size; i++) {
+    if(obj.id == history[i].id) {
+      history[i].x = obj.x;
+      history[i].y = obj.y;
+    }
+  }
+  if(obj.id == projectInFocus.id) {
+    projectInFocus.x = obj.x;
+    projectInFocus.y = obj.y;
+  }
+}
 
 
 
@@ -589,48 +708,48 @@ function recursiveLoop(folder, lastFolder) {
 
 
 
-
+function closeProjectInFocus(project) {
+  project.focusing = false;
+  project.targetSize = nodeSize;
+  let index = history.indexOf(project);
+  if(index != -1) {
+    history.splice(index, 1);
+  }
+}
 
 
 // process the currently expanded project
 function processProjectInFocus(project) {
   // capture mouse input before interface if a project is expanded
-  if(project != 0) {
-    project.size += (project.targetSize - project.size) / mediumSmoothing;
-    if(project.focusing) {
-      project.targetSize = nodeSize * 7; // set the size of expanded project here so that it adapts to changes in scale
-      // if moused over
-      if( dist(mouseX, mouseY, project.x + xa, project.y + ya) < project.size * .5 &&
-          abs(project.targetX - project.x) + abs(project.targetY - project.y) < 10 * scale) { // prevent instant expansion
+  project.size += (project.targetSize - project.size) / mediumSmoothing;
+  if(project.focusing) {
+    project.targetSize = nodeSize * 7; // set the size of expanded project here so that it adapts to changes in scale
+    // if moused over
+    if( dist(mouseX, mouseY, project.x + xa, project.y + ya) < project.size * .5 &&
+        abs(project.targetX - project.x) + abs(project.targetY - project.y) < 10 * scale) { // prevent instant expansion
 
-        project.mouseIn = true;
-            
-        // if clicked on
-        if(mClick) {
-          mClick = false;
-          zeroMouse(mobile);
-        }
-      }
-      else
-      {
-        project.mouseIn = false;
-        // if clicked outside
-        if(mClick) {
-          project.focusing = false;
-          project.targetSize = nodeSize;
-          let index = history.indexOf(project);
-          if(index != -1) {
-            history.splice(index, 1);
-          }
-          mClick = false;
-          zeroMouse(mobile);
-        }
+      project.mouseIn = true;
+          
+      // if clicked on
+      if(mClick) {
+        mClick = false;
+        zeroMouse(mobile);
       }
     }
-    else { // if not focusing, so, CLOSING
-      if(project.size - project.targetSize < 10 * scale) {
-        projectInFocus = 0; // pretty much just delete this object 
+    else
+    {
+      project.mouseIn = false;
+      // if clicked outside
+      if(mClick) {
+        closeProjectInFocus(project);
+        mClick = false;
+        zeroMouse(mobile);
       }
+    }
+  }
+  else { // if not focusing, so, CLOSING
+    if(project.size - project.targetSize < 10 * scale) {
+      projectInFocus = 0; // pretty much just delete this object 
     }
   }
 }
@@ -703,10 +822,10 @@ function drawProjectInFocus(project) {
     labelAnchorX = project.x;
     labelAnchorY = project.y - textSize() * .3 - project.size * .5 - scale * labelMargin;
     fill(col0Arr[0], col0Arr[1], col0Arr[2], animator * 255);
-    rect(labelAnchorX - textWidth(project.title) * .5 - scale * 13 + xa, labelAnchorY - textSize() * 1.16 + ya, textWidth(project.title) + scale * 26, textSize() * .6 + 30 * scale, 10 * scale);
+    rect(labelAnchorX - textWidth(project.id) * .5 - scale * 13 + xa, labelAnchorY - textSize() * 1.16 + ya, textWidth(project.id) + scale * 26, textSize() * .6 + 30 * scale, 10 * scale);
     fill(col4Arr[0], col4Arr[1], col4Arr[2], animator * 255); // draw text with animated alpha
     noStroke();
-    text(project.title, labelAnchorX + xa, labelAnchorY + ya);
+    text(project.id, labelAnchorX + xa, labelAnchorY + ya);
     pop();
 
     // draw description
@@ -725,6 +844,37 @@ function drawProjectInFocus(project) {
     textWrap(WORD);
     text(project.description, labelAnchorX + scale * 10 + xa, labelAnchorY + scale * 10 + ya, project.size * 1.5 - scale * 10);
     pop();
+  }
+}
+
+
+let searchTitle = 0;
+function openSearchedProject(titleText, folderObj) {
+  let foundIt = false;
+  // for every project in the current folder, see if it's the one you're looking for
+  // if it is, add this folder to the path and return saying you found it.
+  for(let i = 0; i < folderObj.projects.length; i++) {
+    if(folderObj.projects[i].id == titleText) {
+      foundIt = true;
+      searchTitle = 0;
+      if(projectInFocus != 0) closeProjectInFocus(projectInFocus)
+      openProject(folderObj.projects[i], folderObj);
+      return true;
+    }
+  }
+  if(!foundIt) {
+    // if it wasn't in this folder, iterate through all of this folder's subfolders
+    for(let i = 0; i < folderObj.subfolders.length; i++)
+    {
+      // if it was found in this subfolder, the folder will be added to the path
+      // this folder adds itself to the path
+      // the return true will cascade down for any other folders to be added.
+      if(openSearchedProject(titleText, folderObj.subfolders[i])) {
+        openFolder(folderObj.subfolders[i], false);
+        return true;
+      }
+    }
+    return false;
   }
 }
 
@@ -748,6 +898,25 @@ function preload() {
 
 
 function setup() {
+  // restyle for mobile
+  if(mobileCheck()) {
+  //if(true) {
+    mobile = true;
+    document.documentElement.style.setProperty('--aboutMeWidth', '100%');
+    document.documentElement.style.setProperty('--aboutMeFontSize', '24pt');
+    document.documentElement.style.setProperty('--aboutMePicSize', '60%');
+    document.documentElement.style.setProperty('--searchFontSize', '24pt');
+    document.documentElement.style.setProperty('--searchInputPadding', '6px');
+    document.documentElement.style.setProperty('--searchResultPadding', '9px');
+    document.documentElement.style.setProperty('--searchBorderRadius', '10px');
+    document.getElementById("searchContainer").style.left = "2.5%";
+    document.getElementById("searchContainer").style.width = "95%";
+    document.getElementById("search").style.width = "calc(100% - 18px)"; // keep the input element from clipping out the end
+  }
+  else { // contingent on knowing if mobile before committing
+    document.getElementById("searchContainer").style.right = "2.5%";
+  }
+
   col0Arr = cssColorParse(col0);
   col1Arr = cssColorParse(col1);
   col2Arr = cssColorParse(col2);
@@ -773,14 +942,17 @@ function setup() {
   document.getElementById("about").addEventListener("click", aboutMeAnim);
   document.getElementById("about").addEventListener("touchend", aboutMeAnim);
 
-  document.getElementById("pic").addEventListener("click", function(e) {e.stopPropagation();})
-  document.getElementById("pic").addEventListener("touchend", function(e) {e.stopPropagation();})
+  document.getElementById("pic").addEventListener("click", function(e) {e.stopPropagation();});
+  document.getElementById("pic").addEventListener("touchend", function(e) {e.stopPropagation();});
 
-  document.getElementById("socials").addEventListener("click", function(e) {e.stopPropagation();})
-  document.getElementById("socials").addEventListener("touchend", function(e) {e.stopPropagation();})
+  document.getElementById("socials").addEventListener("click", function(e) {e.stopPropagation();});
+  document.getElementById("socials").addEventListener("touchend", function(e) {e.stopPropagation();});
 
-  document.getElementById("bio").addEventListener("click", function(e) {e.stopPropagation();})
-  document.getElementById("bio").addEventListener("touchend", function(e) {e.stopPropagation();})
+  document.getElementById("bio").addEventListener("click", function(e) {e.stopPropagation();});
+  document.getElementById("bio").addEventListener("touchend", function(e) {e.stopPropagation();});
+
+  document.getElementById("search").addEventListener("focus", showSearchResults);
+  document.getElementById("search").addEventListener("input", showSearchResults);
 
   centerX = canvas.width / 2;
   centerY = canvas.height / 2;
@@ -823,8 +995,8 @@ function draw() {
   // position the camera
   let histSize = history.length;
   if(histSize > 0) {
-    cam.targetX = history[histSize -1].x;
-    cam.targetY = history[histSize -1].y;
+    cam.targetX = history[histSize - 1].x;
+    cam.targetY = history[histSize - 1].y;
     // offset camera when project view is open
     if(projectInFocus != 0) {
       if(projectInFocus.focusing) cam.targetY += scale * 20;
@@ -865,12 +1037,17 @@ function draw() {
   //}
   pop();
 
+  if(searchTitle != 0) {
+    openSearchedProject(searchTitle, jsonObj);
+    searchTitle = false;
+  }
+
   strokeJoin(ROUND);
   recursiveLoop(jsonObj, jsonObj); // call recursive processing loop on folder hierarchy
-  processProjectInFocus(projectInFocus);
   // draw project in focus on top of interface
   if(projectInFocus != 0) {
     drawProjectInFocus(projectInFocus);
+    processProjectInFocus(projectInFocus);
   }
 
   // i had to draw the gradients inside out and backwards in order to get an exponential slope

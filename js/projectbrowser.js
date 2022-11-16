@@ -45,6 +45,31 @@ window.mobileCheck = function() {
 // check for mobile user and adjust css variables accordingly
 let mobile = false;
 
+function terminalInput() {
+  let inputField = document.getElementById("search");
+  let val = inputField.value;
+
+  switch(val) {
+    case "_secrets":
+      alert("Try typing these in the search bar!\n\n    _spin\n    _explode\n    _rave");
+      break;
+    case "_spin":
+      secret.spin = !secret.spin;
+      break;
+    case "_explode":
+      secret.explode = true;
+      break;
+    case "_rave":
+      if(!secret.rave) {
+        if(confirm("Allow intense flashing colors?")) {
+          secret.rave = true;
+        }
+      }
+      else secret.rave = false;
+      break;
+  }
+  inputField.value = "";
+}
 
 function showSearchResults() {
   let inputField = document.getElementById("search");
@@ -163,6 +188,13 @@ let canvas;
 let extraWidth = 18; // ensures the canvas goes all the way to the edge
 let extraHeight = -10; // add extra margin
 
+// cheat codes
+const secret = {
+  "spin": false,
+  "explode": false,
+  "rave": false
+}
+
 // camera object
 const cam = {
   x: 0,
@@ -229,6 +261,50 @@ let mClick = false;
 const history = [];
 
 
+
+function refreshColors() {
+  col0 = getComputedStyle(document.documentElement).getPropertyValue("--col0");
+  col1 = getComputedStyle(document.documentElement).getPropertyValue("--col1");
+  col2 = getComputedStyle(document.documentElement).getPropertyValue("--col2");
+  col3 = getComputedStyle(document.documentElement).getPropertyValue("--col3");
+  col4 = getComputedStyle(document.documentElement).getPropertyValue("--col4");
+  col5 = getComputedStyle(document.documentElement).getPropertyValue("--col5");
+  col0Arr = cssColorParse(col0);
+  col1Arr = cssColorParse(col1);
+  col2Arr = cssColorParse(col2);
+  col3Arr = cssColorParse(col3);
+  col4Arr = cssColorParse(col4);
+  col5Arr = cssColorParse(col5);
+}
+
+function rave() {
+  let r = Math.floor(random(0, 256));
+  let g = Math.floor(random(0, 256));
+  let b = Math.floor(random(0, 256));
+  document.documentElement.style.setProperty('--col0', "rgb(" + r + ", " + g + ", " + b + ")");
+  r = Math.floor(random(0, 256));
+  g = Math.floor(random(0, 256));
+  b = Math.floor(random(0, 256));
+  document.documentElement.style.setProperty('--col1', "rgb(" + r + ", " + g + ", " + b + ")");
+  r = Math.floor(random(0, 256));
+  g = Math.floor(random(0, 256));
+  b = Math.floor(random(0, 256));
+  document.documentElement.style.setProperty('--col2', "rgb(" + r + ", " + g + ", " + b + ")");
+  r = Math.floor(random(0, 256));
+  g = Math.floor(random(0, 256));
+  b = Math.floor(random(0, 256));
+  document.documentElement.style.setProperty('--col3', "rgb(" + r + ", " + g + ", " + b + ")");
+  r = Math.floor(random(0, 256));
+  g = Math.floor(random(0, 256));
+  b = Math.floor(random(0, 256));
+  document.documentElement.style.setProperty('--col4', "rgb(" + r + ", " + g + ", " + b + ")");
+  r = Math.floor(random(0, 256));
+  g = Math.floor(random(0, 256));
+  b = Math.floor(random(0, 256));
+  document.documentElement.style.setProperty('--col5', "rgb(" + r + ", " + g + ", " + b + ")");
+
+  refreshColors();
+}
 
 
 // this and aboutMeClose call each other, but only if each one wasn't already called
@@ -847,6 +923,15 @@ function drawProjectInFocus(project) {
   }
 }
 
+// open everything
+function explode(folderObj) {
+  openFolder(folderObj, false);
+  for(let i = 0; i < folderObj.subfolders.length; i++)
+  {
+    explode(folderObj.subfolders[i]);
+  }
+}
+
 
 let searchTitle = 0;
 function openSearchedProject(titleText, folderObj) {
@@ -953,6 +1038,7 @@ function setup() {
 
   document.getElementById("search").addEventListener("focus", showSearchResults);
   document.getElementById("search").addEventListener("input", showSearchResults);
+  document.getElementById("search").addEventListener("change", terminalInput);
 
   centerX = canvas.width / 2;
   centerY = canvas.height / 2;
@@ -1016,7 +1102,17 @@ function draw() {
   cam.x += (cam.targetX - cam.x) / cam.smoothing;
   cam.y += (cam.targetY - cam.y) / cam.smoothing;
 
-  //cam.angle += .25;
+  // apply secrets
+  if(secret.spin) {
+    cam.angle += .25;
+  }
+  if(secret.explode) {
+    secret.explode = false;
+    explode(jsonObj);
+  }
+  if(secret.rave) {
+    rave();
+  }
 
   // draw tiling background image
   push();
@@ -1036,6 +1132,8 @@ function draw() {
   //  }
   //}
   pop();
+
+
 
   if(searchTitle != 0) {
     openSearchedProject(searchTitle, jsonObj);

@@ -50,7 +50,7 @@ function terminalInput() {
   let val = inputField.value;
 
   switch(val) {
-    case "_secrets":
+    case "_secret":
       alert("Try typing these in the search bar!\n\n    _spin\n    _explode\n    _rave");
       break;
     case "_spin":

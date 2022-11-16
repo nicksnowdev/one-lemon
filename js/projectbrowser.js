@@ -997,6 +997,7 @@ function konami(e) {
 
   if(codeInput.length == konamiCode.length) {
     terminalInput("_secret");
+    while(codeInput.length > 0) codeInput.pop(); // clear after successful input too
   }
 }
 

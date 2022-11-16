@@ -45,9 +45,18 @@ window.mobileCheck = function() {
 // check for mobile user and adjust css variables accordingly
 let mobile = false;
 
-function terminalInput() {
+function terminalInput(cmd) {
   let inputField = document.getElementById("search");
   let val = inputField.value;
+
+  // allow commands to be passed in remotely instead of from the search bar.
+  switch(cmd) {
+    case "_secret":
+    case "_spin":
+    case "_explode":
+    case "_rave":
+      val = cmd;
+  }
 
   switch(val) {
     case "_secret":
@@ -964,6 +973,32 @@ function openSearchedProject(titleText, folderObj) {
 }
 
 
+// allow konami code to show list of secrets
+const codeInput = [];
+const konamiCode = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65, 13];
+function konami(e) {
+  switch(e.keyCode) {
+    case 37:
+    case 38:
+    case 39:
+    case 40:
+    case 65:
+    case 66:
+    case 13:
+      codeInput.push(e.keyCode);
+      break;
+    default:
+      while(codeInput.length > 0) codeInput.pop();
+  }
+  // verify code progress, clear if a mistake is made
+  if(codeInput[codeInput.length - 1] != konamiCode[codeInput.length - 1]) {
+    while(codeInput.length > 0) codeInput.pop();
+  }
+
+  if(codeInput.length == konamiCode.length) {
+    terminalInput("_secret");
+  }
+}
 
 
 
@@ -1017,6 +1052,8 @@ function setup() {
   canvas.style("z-index", 0);
 
   // event listeners must be added after the page loads, so they are in setup
+  document.documentElement.addEventListener("keydown", konami);
+
   document.getElementById(canvas.id()).addEventListener("click", canvasClicked);
   document.getElementById(canvas.id()).addEventListener("touchend", canvasClicked);
 

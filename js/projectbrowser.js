@@ -45,6 +45,110 @@ window.mobileCheck = function() {
 // check for mobile user and adjust css variables accordingly
 let mobile = false;
 
+/************ END NON-P5 STUFF ************/
+
+
+
+
+// import colors from css
+let col0 = getComputedStyle(document.documentElement).getPropertyValue("--col0");
+let col1 = getComputedStyle(document.documentElement).getPropertyValue("--col1");
+let col2 = getComputedStyle(document.documentElement).getPropertyValue("--col2");
+let col3 = getComputedStyle(document.documentElement).getPropertyValue("--col3");
+let col4 = getComputedStyle(document.documentElement).getPropertyValue("--col4");
+let col5 = getComputedStyle(document.documentElement).getPropertyValue("--col5");
+
+let col0Arr;
+let col1Arr;
+let col2Arr;
+let col3Arr;
+let col4Arr;
+let col5Arr;
+
+let bioMinWidth = getComputedStyle(document.documentElement).getPropertyValue("--aboutMeMinWidth");
+
+// canvas and sundry variables
+let containerSize;
+let canvas;
+let extraWidth = 18; // ensures the canvas goes all the way to the edge
+let extraHeight = -10; // add extra margin
+
+// cheat codes
+const secret = {
+  "spin": false,
+  "explode": false,
+  "rave": false,
+  "synthwave": false,
+}
+
+// camera object
+const cam = {
+  x: 0,
+  y: 0,
+  targetX: 0,
+  targetY: 0,
+  smoothing: 10, // has its own smoothing variable
+  angle: 10
+}
+// these are used to draw things relative to the center of the canvas
+let centerX = 0;
+let centerY = 0;
+let xa = 0; // x *adjusted
+let ya = 0; // y *adjusted
+
+// interface constants
+const ND = 100; // node dispersion
+const NS = 50; // node size
+const WM = 2; // wobble magnitude
+const BW = 14; // branch weight
+const LW = 7; // leaf weight
+const FFS = 17; // folder font size
+const FONTNAME = "Vanilla Extract";
+const GD = 37; // grid dispersion
+const GW = 2; // grid weight
+// these get changed with scale
+let nodeDispersion = ND;
+let nodeSize = NS;
+let gridDispersion = GD;
+let gridDispersion10 = gridDispersion * 10;
+let gridWeight = GW;
+let wobbleXRate = 2;
+let wobbleYRate = 1.5;
+let wobbleMag = WM;
+let branchWeight = BW;
+let leafWeight = LW;
+let scale = 1; // scale changes when you change the canvas size. keeps everything looking the same accross devices.
+let smoothing = 5; // smoothing for node motion
+let mediumSmoothing = 3; // smoothing for project focus expansions
+let fastSmoothing = 2; // smoothing for node mouse-over expansions
+let nodeAngle = 140; // determines how wide the branches spread out.
+
+let projectInFocus = 0; // this variable holds the currently open project and draws it on top of everything.
+let projectLink; // this holds an <a> element that is created dynamically for projects in focus
+
+// json object and container for preloaded thumbnails
+let jsonObj;
+const allProjects = []; // used for search feature
+const searchResults = [];
+const thumbnails = {};
+let masker;
+// used for the one-lemon thumbnail
+let feedbackMasker;
+let dim; // set in windowResized(), holds shortest canvas dimension
+let oneLemonVisible = false;
+
+// dot matrix for canvas background
+let bgImg;
+let bgStandard;
+let bgGrid;
+
+// used to keep track of mouse input
+let mClick = false;
+
+// keep a history of the last clicked-on nodes so the camera can focus on the right place
+const history = [];
+
+
 function terminalInput(cmd) {
   let inputField = document.getElementById("search");
   let val = inputField.value;
@@ -55,12 +159,13 @@ function terminalInput(cmd) {
     case "_spin":
     case "_explode":
     case "_rave":
+    case "_synthwave":
       val = cmd;
   }
 
   switch(val) {
     case "_secret":
-      alert("Try typing these in the search bar!\n\n    _spin\n    _explode\n    _rave");
+      alert("Try typing these in the search bar!\n\n    _spin\n    _explode\n    _rave\n    _synthwave");
       break;
     case "_spin":
       secret.spin = !secret.spin;
@@ -76,6 +181,17 @@ function terminalInput(cmd) {
       }
       else secret.rave = false;
       break;
+    case "_synthwave":
+      if(!secret.synthwave) {
+        colorPalette("synthwave");
+        secret.synthwave = true;
+        bgImg = bgGrid;
+      }
+      else {
+        colorPalette("standard");
+        secret.synthwave = false;
+        bgImg = bgStandard;
+      }
   }
   inputField.value = "";
 }
@@ -169,107 +285,6 @@ function clearSearchResults() {
   inputField.style.borderBottomRightRadius = getComputedStyle(document.documentElement).getPropertyValue("--searchBorderRadius");
 }
 
-/************ END NON-P5 STUFF ************/
-
-
-
-
-// import colors from css
-let col0 = getComputedStyle(document.documentElement).getPropertyValue("--col0");
-let col1 = getComputedStyle(document.documentElement).getPropertyValue("--col1");
-let col2 = getComputedStyle(document.documentElement).getPropertyValue("--col2");
-let col3 = getComputedStyle(document.documentElement).getPropertyValue("--col3");
-let col4 = getComputedStyle(document.documentElement).getPropertyValue("--col4");
-let col5 = getComputedStyle(document.documentElement).getPropertyValue("--col5");
-
-let col0Arr;
-let col1Arr;
-let col2Arr;
-let col3Arr;
-let col4Arr;
-let col5Arr;
-
-let bioMinWidth = getComputedStyle(document.documentElement).getPropertyValue("--aboutMeMinWidth");
-
-// canvas and sundry variables
-let containerSize;
-let canvas;
-let extraWidth = 18; // ensures the canvas goes all the way to the edge
-let extraHeight = -10; // add extra margin
-
-// cheat codes
-const secret = {
-  "spin": false,
-  "explode": false,
-  "rave": false
-}
-
-// camera object
-const cam = {
-  x: 0,
-  y: 0,
-  targetX: 0,
-  targetY: 0,
-  smoothing: 10, // has its own smoothing variable
-  angle: 10
-}
-// these are used to draw things relative to the center of the canvas
-let centerX = 0;
-let centerY = 0;
-let xa = 0; // x *adjusted
-let ya = 0; // y *adjusted
-
-// interface constants
-const ND = 100; // node dispersion
-const NS = 50; // node size
-const WM = 2; // wobble magnitude
-const BW = 14; // branch weight
-const LW = 7; // leaf weight
-const FFS = 17; // folder font size
-const FONTNAME = "Vanilla Extract";
-const GD = 37; // grid dispersion
-const GW = 2; // grid weight
-// these get changed with scale
-let nodeDispersion = ND;
-let nodeSize = NS;
-let gridDispersion = GD;
-let gridDispersion10 = gridDispersion * 10;
-let gridWeight = GW;
-let wobbleXRate = 2;
-let wobbleYRate = 1.5;
-let wobbleMag = WM;
-let branchWeight = BW;
-let leafWeight = LW;
-let scale = 1; // scale changes when you change the canvas size. keeps everything looking the same accross devices.
-let smoothing = 5; // smoothing for node motion
-let mediumSmoothing = 3; // smoothing for project focus expansions
-let fastSmoothing = 2; // smoothing for node mouse-over expansions
-let nodeAngle = 140; // determines how wide the branches spread out.
-
-let projectInFocus = 0; // this variable holds the currently open project and draws it on top of everything.
-let projectLink; // this holds an <a> element that is created dynamically for projects in focus
-
-// json object and container for preloaded thumbnails
-let jsonObj;
-const allProjects = []; // used for search feature
-const searchResults = [];
-const thumbnails = {};
-let masker;
-// used for the one-lemon thumbnail
-let feedbackMasker;
-let dim; // set in windowResized(), holds shortest canvas dimension
-let oneLemonVisible = false;
-
-// dot matrix for canvas background
-let bgImg;
-
-// used to keep track of mouse input
-let mClick = false;
-
-// keep a history of the last clicked-on nodes so the camera can focus on the right place
-const history = [];
-
-
 
 function refreshColors() {
   col0 = getComputedStyle(document.documentElement).getPropertyValue("--col0");
@@ -312,6 +327,29 @@ function rave() {
   b = Math.floor(random(0, 256));
   document.documentElement.style.setProperty('--col5', "rgb(" + r + ", " + g + ", " + b + ")");
 
+  refreshColors();
+}
+
+function colorPalette(theme) {
+  switch(theme) {
+    case "synthwave":
+      document.documentElement.style.setProperty('--col0', "rgb(112, 23, 255)"); // bright blue
+      document.documentElement.style.setProperty('--col1', "rgb(112, 23, 255)"); // bright blue
+      document.documentElement.style.setProperty('--col2', "rgb(29, 8, 59)"); // dark purple
+      document.documentElement.style.setProperty('--col3', "rgb(144, 0, 173)"); // medium purple
+      document.documentElement.style.setProperty('--col4', "rgb(255, 64, 255)"); // hot pink
+      document.documentElement.style.setProperty('--col5', "rgb(255, 145, 0)"); // hot orange
+      break;
+
+    case "standard":
+      document.documentElement.style.setProperty('--col0', "rgb(33, 33, 33)");
+      document.documentElement.style.setProperty('--col1', "rgb(47, 54, 54)");
+      document.documentElement.style.setProperty('--col2', "rgb(106, 112, 92)");
+      document.documentElement.style.setProperty('--col3', "rgb(135, 150, 150)");
+      document.documentElement.style.setProperty('--col4', "rgb(188, 209, 209)");
+      document.documentElement.style.setProperty('--col5', "rgb(252, 197, 45)");
+      break;
+  }
   refreshColors();
 }
 
@@ -1008,7 +1046,8 @@ function konami(e) {
 function preload() {
   // load json file containing all the information about how to organize the projects
   jsonObj = loadJSON("json/meta.json");
-  bgImg = loadImage("images/bg.png");
+  bgStandard = loadImage("images/bg.png");
+  bgGrid = loadImage("images/glowing_grid.png");
 }
 
 
@@ -1019,6 +1058,7 @@ function preload() {
 
 
 function setup() {
+  bgImg = bgStandard;
   // restyle for mobile
   if(mobileCheck()) {
   //if(true) {
@@ -1187,8 +1227,8 @@ function draw() {
   }
 
   // i had to draw the gradients inside out and backwards in order to get an exponential slope
-  gradient(0, 20, canvas.width, 20, color(0, 0, 0, 127), color(0, 0, 0, 0), -1);
-  gradient(0, canvas.height - 20, canvas.width, 20, color(0, 0, 0, 127), color(0, 0, 0, 0), 1);
+  gradient(0, 20, canvas.width, 20, color(col0Arr[0], col0Arr[1], col0Arr[2], 127), color(col0Arr[0], col0Arr[1], col0Arr[2], 0), -1);
+  gradient(0, canvas.height - 20, canvas.width, 20, color(col0Arr[0], col0Arr[1], col0Arr[2], 127), color(col0Arr[0], col0Arr[1], col0Arr[2], 0), 1);
 
 
 

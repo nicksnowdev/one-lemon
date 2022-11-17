@@ -79,6 +79,7 @@ const secret = {
   "explode": false,
   "rave": false,
   "synthwave": false,
+  "lemontype": false,
 }
 
 // camera object
@@ -148,6 +149,32 @@ let mClick = false;
 // keep a history of the last clicked-on nodes so the camera can focus on the right place
 const history = [];
 
+let lemonIcon;
+let lemonrain = [];
+class lemondrop {
+  constructor() {
+    this.x = random(0 + width * .01, width * .99);
+    this.y = -lemonIcon.height;
+    this.fallSpd = 0;
+    this.acc = 1;
+  }
+
+  physics_update() {
+    this.fallSpd += this.acc;
+    this.y += this.fallSpd;
+
+    if(this.y > height) {
+      lemonrain.shift(); // the first lemon down will always be the first one out
+      delete this;
+    }
+  }
+
+  draw() {
+    push();
+    image(lemonIcon, this.x, this.y);
+    pop();
+  }
+}
 
 function terminalInput(cmd) {
   let inputField = document.getElementById("search");
@@ -160,12 +187,13 @@ function terminalInput(cmd) {
     case "_explode":
     case "_rave":
     case "_synthwave":
+    case "_lemontype":
       val = cmd;
   }
 
   switch(val) {
     case "_secret":
-      alert("Try typing these in the search bar!\n\n    _spin\n    _explode\n    _rave\n    _synthwave");
+      alert("Try typing these in the search bar!\n\n    _spin\n    _explode\n    _rave\n    _synthwave\n    _lemontype");
       break;
     case "_spin":
       secret.spin = !secret.spin;
@@ -192,6 +220,10 @@ function terminalInput(cmd) {
         secret.synthwave = false;
         bgImg = bgStandard;
       }
+      break;
+    case "_lemontype":
+      secret.lemontype = !secret.lemontype;
+      break;
   }
   inputField.value = "";
 }
@@ -1037,6 +1069,11 @@ function konami(e) {
     terminalInput("_secret");
     while(codeInput.length > 0) codeInput.pop(); // clear after successful input too
   }
+
+  // lemonrain runs out of here
+  if(secret.lemontype) {
+    lemonrain.push(new lemondrop());
+  }
 }
 
 
@@ -1048,6 +1085,7 @@ function preload() {
   jsonObj = loadJSON("json/meta.json");
   bgStandard = loadImage("images/bg.png");
   bgGrid = loadImage("images/glowing_grid.png");
+  lemonIcon = loadImage("images/favicon.png");
 }
 
 
@@ -1212,7 +1250,6 @@ function draw() {
   pop();
 
 
-
   if(searchTitle != 0) {
     openSearchedProject(searchTitle, jsonObj);
     searchTitle = false;
@@ -1220,6 +1257,13 @@ function draw() {
 
   strokeJoin(ROUND);
   recursiveLoop(jsonObj, jsonObj); // call recursive processing loop on folder hierarchy
+
+  // draw lemon rain
+  for(let i = 0; i < lemonrain.length; i++) {
+    lemonrain[i].draw();
+    lemonrain[i].physics_update();
+  }
+
   // draw project in focus on top of interface
   if(projectInFocus != 0) {
     drawProjectInFocus(projectInFocus);

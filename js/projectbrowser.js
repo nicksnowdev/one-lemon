@@ -1232,8 +1232,8 @@ function draw() {
 
   // draw tiling background image
   push();
-  for(let y = -1; y < canvas.height / gridDispersion10; y++) {
-    for(let x = -1; x < canvas.width / gridDispersion10; x++) {
+  for(let y = -1; y < canvas.height / gridDispersion10 + 1; y++) {
+    for(let x = -1; x < canvas.width / gridDispersion10 + 1; x++) {
       // honestly i'm not sure how this works... the image itself is 481x481, but it only works if i draw it at 371x371.
       // if you need to adjust this at all, screenshot a 10x10 group of dots at 80% zoom on the webpage.
       image(bgImg, (x + .05) * gridDispersion10 - (cam.x * .5) % gridDispersion10, (y + .05) * gridDispersion10 - (cam.y * .5) % gridDispersion10, gridDispersion10 + 1, gridDispersion10 + 1);

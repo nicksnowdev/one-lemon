@@ -71,11 +71,13 @@ function sidebarAnim() {
     document.getElementById("sidebar").classList.remove("sidebarRetractAnim");
     void document.getElementById("sidebar").offsetWidth;
     document.getElementById("sidebar").classList.add("sidebarExpandAnim");
+    document.getElementById("sidebar").style.boxShadow = "0px 0px 15px var(--col0)"; // apply shadow when open
   }
   else {
     document.getElementById("sidebar").classList.remove("sidebarExpandAnim");
     void document.getElementById("sidebar").offsetWidth;
     document.getElementById("sidebar").classList.add("sidebarRetractAnim");
+    document.getElementById("sidebar").style.boxShadow = "0px 0px 0px var(--col0)"; // hide shadow when closed
   }
   sidebarExpanded = !sidebarExpanded;
 }

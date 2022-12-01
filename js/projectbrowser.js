@@ -58,6 +58,7 @@ let col3 = getComputedStyle(document.documentElement).getPropertyValue("--col3")
 let col4 = getComputedStyle(document.documentElement).getPropertyValue("--col4");
 let col5 = getComputedStyle(document.documentElement).getPropertyValue("--col5");
 
+// these are used to hold parsed rbg components
 let col0Arr;
 let col1Arr;
 let col2Arr;
@@ -113,8 +114,8 @@ let nodeSize = NS;
 let gridDispersion = GD;
 let gridDispersion10 = gridDispersion * 10;
 let gridWeight = GW;
-let wobbleXRate = 2;
-let wobbleYRate = 1.5;
+let wobbleXRate = 2; // rate of horizontal wobble on the nodes
+let wobbleYRate = 1.5; // rate of vertical wobble on the nodes
 let wobbleMag = WM;
 let branchWeight = BW;
 let leafWeight = LW;
@@ -132,8 +133,8 @@ let jsonObj;
 const allProjects = []; // used for search feature
 const searchResults = [];
 const thumbnails = {};
-let masker;
-// used for the one-lemon thumbnail
+let masker; // used for masking thumbnail images.
+// used for the one-lemon live thumbnail
 let feedbackMasker;
 let dim; // set in windowResized(), holds shortest canvas dimension
 let oneLemonVisible = false;
@@ -149,6 +150,7 @@ let mClick = false;
 // keep a history of the last clicked-on nodes so the camera can focus on the right place
 const history = [];
 
+// for _lemontype
 let lemonIcon;
 let lemonrain = [];
 class lemondrop {
@@ -176,6 +178,9 @@ class lemondrop {
   }
 }
 
+// for receiving input from the search bar
+// this function can be a callback function on an event listener, in which case cmd is the event
+// this function can also be called with a specific command for an argument (like when the konami code is entered)
 function terminalInput(cmd) {
   let inputField = document.getElementById("search");
   let val = inputField.value;
@@ -191,6 +196,7 @@ function terminalInput(cmd) {
       val = cmd;
   }
 
+  // toggle secrets
   switch(val) {
     case "_secret":
       alert("Try typing these in the search bar!\n\n    _spin\n    _explode\n    _rave\n    _synthwave\n    _lemontype");
@@ -317,7 +323,7 @@ function clearSearchResults() {
   inputField.style.borderBottomRightRadius = getComputedStyle(document.documentElement).getPropertyValue("--searchBorderRadius");
 }
 
-
+// this updates the color variables used in drawing the p5 interface from the css document
 function refreshColors() {
   col0 = getComputedStyle(document.documentElement).getPropertyValue("--col0");
   col1 = getComputedStyle(document.documentElement).getPropertyValue("--col1");
@@ -395,6 +401,7 @@ function canvasClicked(e) {
   if(aboutExpanded) aboutMeClose(e);
 }
 
+// this resets the "mouse" position after something is tapped on mobile.
 function zeroMouse(mobile) {
   if(mobile) {
     mouseX = 0;

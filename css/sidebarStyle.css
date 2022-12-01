@@ -32,6 +32,7 @@
     font-family: "Vanilla Extract";
     font-size: var(--descriptionFontSize);
     color: var(--col0);
+    box-shadow: 0px 0px 0px var(--col0);
 }
 
 #descriptionTitle {

@@ -1,62 +1,66 @@
 {
-    "id": "main",
-    "projects": [
-
-    ],
-    "subfolders": [
+  "id": "main",
+  "projects": [],
+  "subfolders": [
+    {
+      "id": "Chaos/Fractals",
+      "projects": [
         {
-            "id": "Chaos/Fractals",
-            "projects": [
-                {
-                    "id": "Lorenz Attractor",
-                    "path": "Lorenz-Attractor",
-                    "description": "Tweak parameters and explore this mesmerizing chaotic system."
-                },
-                {
-                    "id": "Mandelbrot Explorer",
-                    "path": "Mandelbrot-Explorer",
-                    "description": "Zoom in and discover the infinite detail of the Mandelbrot set."
-                }
-            ],
-            "subfolders": [
-
-            ]
+          "id": "Lorenz Attractor",
+          "path": "Lorenz-Attractor",
+          "description": "Tweak parameters and explore this mesmerizing chaotic system."
         },
         {
-            "id": "Just for Fun",
-            "projects": [
-                {
-                    "id": "One Lemon",
-                    "path": "one-lemon",
-                    "description": "This website!"
-                },
-                {
-                    "id": "Rogue Royale",
-                    "path": "Rogue-Royale",
-                    "description": "A tool I built for my friend's Twitch stream"
-                }
-            ],
-            "subfolders": [
-
-            ]
-        },
-        {
-            "id": "Cellular Automata",
-            "projects": [
-                {
-                    "id": "Game of Life",
-                    "path": "GPU-Conway",
-                    "description": "A stylized interpretation of one of the most famous cellular automata."
-                },
-                {
-                    "id": "2^512 2D CAs!",
-                    "path": "GPU-2D-CA",
-                    "description": "Explore every possible 2D cellular automaton with a 3x3 neighborhood!"
-                }
-            ],
-            "subfolders": [
-    
-            ]
+          "id": "Mandelbrot Explorer",
+          "path": "Mandelbrot-Explorer",
+          "description": "Zoom in and discover the infinite detail of the Mandelbrot set."
         }
-    ]
+      ],
+      "subfolders": []
+    },
+    {
+      "id": "Just for Fun",
+      "projects": [
+        {
+          "id": "One Lemon",
+          "path": "one-lemon",
+          "description": "This website!"
+        },
+        {
+          "id": "Rogue Royale",
+          "path": "Rogue-Royale",
+          "description": "A tool I built for my friend's Twitch stream"
+        }
+      ],
+      "subfolders": []
+    },
+    {
+      "id": "Cellular Automata",
+      "projects": [
+        {
+          "id": "Game of Life",
+          "path": "GPU-Conway",
+          "description": "A stylized interpretation of one of the most famous cellular automata."
+        }
+      ],
+      "subfolders": [
+        {
+          "id": "Universal CA Generator",
+          "projects": [
+            {
+              "id": "2^512 2D CAs [old]",
+              "path": "GPU-2D-CA",
+              "description": "I remade this project at ca-workbench.com"
+            },
+            {
+              "id": "CA-Workbench",
+              "path": "CA-Workbench",
+              "description": "Browse, edit, generate, and save interesting 2D cellular automata!"
+            }
+          ],
+          "subfolders": []
+        }
+      ]
+    }
+  ]
 }

@@ -53,7 +53,7 @@
               "description": "I remade this project at ca-workbench.com"
             },
             {
-              "id": "CA-Workbench",
+              "id": "CA Workbench",
               "path": "CA-Workbench",
               "description": "Browse, edit, generate, and save interesting 2D cellular automata!"
             }

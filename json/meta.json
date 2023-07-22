@@ -3,26 +3,10 @@
   "projects": [],
   "subfolders": [
     {
-      "id": "Chaos/Fractals",
-      "projects": [
-        {
-          "id": "Lorenz Attractor",
-          "path": "Lorenz-Attractor",
-          "description": "Tweak parameters and explore this mesmerizing chaotic system."
-        },
-        {
-          "id": "Mandelbrot Explorer",
-          "path": "Mandelbrot-Explorer",
-          "description": "Zoom in and discover the infinite detail of the Mandelbrot set."
-        }
-      ],
-      "subfolders": []
-    },
-    {
       "id": "Just for Fun",
       "projects": [
         {
-          "id": "One Lemon",
+          "id": "one lemon",
           "path": "one-lemon",
           "description": "This website!"
         },
@@ -30,35 +14,73 @@
           "id": "Rogue Royale",
           "path": "Rogue-Royale",
           "description": "A tool I built for my friend's Twitch stream"
+        },
+        {
+          "id": "Mancala",
+          "path": "Mancala",
+          "description": "A bare-bones mancala game I coded in 1 day in a car on a cell phone"
         }
       ],
       "subfolders": []
     },
     {
-      "id": "Cellular Automata",
+      "id": "Desktop",
       "projects": [
         {
-          "id": "Game of Life",
-          "path": "GPU-Conway",
-          "description": "A stylized interpretation of one of the most famous cellular automata."
+          "id": "aesthetxt",
+          "path": "aesthetxt",
+          "description": "An aesthetic text editor."
         }
       ],
+      "subfolders": []
+    },
+    {
+      "id": "Web",
+      "projects": [],
       "subfolders": [
         {
-          "id": "Universal CA Generator",
+          "id": "Chaos/Fractals",
           "projects": [
             {
-              "id": "2^512 2D CAs [old]",
-              "path": "GPU-2D-CA",
-              "description": "I remade this project at ca-workbench.com"
+              "id": "Mandelbrot Explorer",
+              "path": "Mandelbrot-Explorer",
+              "description": "Zoom in and discover the infinite detail of the Mandelbrot set."
             },
             {
-              "id": "CA Workbench",
-              "path": "CA-Workbench",
-              "description": "Browse, generate, edit, and save interesting 2D cellular automata with this unique rule editor."
+              "id": "Lorenz Attractor",
+              "path": "Lorenz-Attractor",
+              "description": "Tweak parameters and explore this mesmerizing chaotic system."
             }
           ],
           "subfolders": []
+        },
+        {
+          "id": "Cellular Automata",
+          "projects": [
+            {
+              "id": "Game of Life",
+              "path": "GPU-Conway",
+              "description": "A stylized interpretation of one of the most famous cellular automata."
+            }
+          ],
+          "subfolders": [
+            {
+              "id": "Universal CA Generator",
+              "projects": [
+                {
+                  "id": "CA Workbench",
+                  "path": "CA-Workbench",
+                  "description": "Browse, generate, edit, and save interesting 2D cellular automata with this unique rule editor."
+                },
+                {
+                  "id": "2^512 2D CAs [old]",
+                  "path": "GPU-2D-CA",
+                  "description": "I remade this project at ca-workbench.com"
+                }
+              ],
+              "subfolders": []
+            }
+          ]
         }
       ]
     }

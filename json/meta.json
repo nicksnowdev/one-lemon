@@ -27,6 +27,11 @@
       "id": "Desktop",
       "projects": [
         {
+          "id": "Limestone",
+          "path": "Limestone",
+          "description": "A demo for the game I was developing in 2021. I'm no longer working on it, but you can download it from this itch.io page."
+        },
+        {
           "id": "aesthetxt",
           "path": "aesthetxt",
           "description": "An aesthetic text editor."
